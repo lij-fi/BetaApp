@@ -1,0 +1,211 @@
+---
+title: "Dynamic report"
+output:
+  html_document:
+    theme: united
+    highlight: tango
+  
+
+params:
+  Filt: NA
+  Area: NA
+  Geo: NA
+  ST: NA
+  Analy: NA
+  Group: NA
+
+---
+\singlespacing
+## Analyis of Issues `r params$Filt$issueA` and `r params$Filt$issueB`
+### The flags you selected are `r params$Filt$Level_1` and `r params$Filt$Level_2`
+
+
+### Filters
+* **Race:**  **`r params$Filt$Race`** 
+* **Age Range:** **`r params$Filt$Age[1]`** **to** **`r params$Filt$Age[2]`** 
+* **Gender:** **`r params$Filt$Gender`**
+
+*** 
+
+`r if(params$Filt$ST_Eval){"# Spread Tables {.tabset}"}` 
+
+`r if(params$Filt$ST_Eval){"## Total Overlap"}`
+
+
+```{r, echo=FALSE, eval=params$Filt$ST_Eval}
+#library(VennDiagram)
+#grid.draw(params$venn)
+params$ST$Partisan
+
+```
+
+
+`r if(params$Filt$ST_Eval){"##  Race - Age - Partisanship"}`
+```{r echo=FALSE, eval=params$Filt$ST_Eval}
+params$ST$Age
+params$ST$Race
+```
+
+
+`r if(params$Filt$Geo_Eval){"# Geographic Data {.tabset}"}` 
+
+`r if(params$Filt$Geo_Eval){"## Map & Graphs"}` 
+
+```{r out.width=c("100%"), echo=FALSE, eval=params$Filt$Geo_Eval}
+library('leaflet')
+params$Geo$Mappy
+```
+
+`r if(params$Filt$Geo_Eval){"## Geo Table"}` 
+```{r echo=FALSE, eval=params$Filt$Geo_Eval}
+params$Geo$DT
+```
+
+* *Total Voters: Total number of voters in the zip code* 
+* *Selected Voters: Number of Voters with both flags*
+* *Concentration: Percent of total voters with both flags*
+***
+
+***
+
+`r if(params$Filt$Analy_Eval){"# Analytics {.tabset}"}`
+
+```{r, echo=FALSE, results='asis', eval=params$Filt$Analy_Eval}
+
+cat("## Conditional Probabilities")
+
+```
+
+```{r, echo=FALSE, eval=params$Filt$Analy_Eval}
+params$Analy$Prob_BA
+params$Analy$Prob_AB
+```
+
+```{r, echo=FALSE, results='asis', eval=params$Filt$Analy_Eval}
+
+cat("## Shared with Both Similatiry")
+
+```
+
+```{r, echo=FALSE, eval=params$Filt$Analy_Eval, out.width=c('50%', '50%')}
+params$Analy$Most_Shared
+```
+
+```{r, echo=FALSE, results='asis', eval=params$Filt$Analy_Eval}
+
+cat("## One Way Similatiry")
+
+```
+
+
+```{r, echo=FALSE, eval=params$Filt$Analy_Eval, out.width=c('50%', '50%')}
+params$Analy$First_Flag
+params$Analy$Second_Flag
+```
+
+
+`r if(params$Filt$Group_Eval){"# Group Comparisions {.tabset}"}`
+`r if(params$Filt$Group_Eval){"## Group Filter Selections {.tabset}"}`
+```{r, echo=FALSE, eval=params$Filt$Group_Eval, out.width=c('50%', '50%'), cache=TRUE}
+
+G1_Race_Lab<-paste(params$Group$G1_Race, collapse = " and ")
+G1_Age_Lab<-paste(params$Group$G1_Age, collapse = " to ")
+G1_labels <- sprintf(
+    "<strong>Group 1:</strong><br/>Race: %s<br/>Age: %s<br/>Gender: %s <br/>
+    <br/>Income range: %s<br/>Included Elections: %s<br/>Excluded Elections %s",
+    G1_Race_Lab, G1_Age_Lab, params$Group$G1_Gender, 
+    params$Group$G1_Income_Range, params$Group$G1_Elections, params$Group$G1_No_Elections
+  ) %>% lapply(htmltools::HTML)
+
+G2_Race_Lab<-paste(params$Group$G2_Race, collapse = " and ")
+G2_Age_Lab<-paste(params$Group$G2_Age, collapse = " to ")
+G2_labels <- sprintf(
+    "<strong>Group 2:</strong><br/>Race: %s<br/>Age: %s<br/>Gender: %s <br/>
+    <br/>Income range: %s<br/>Included Elections: %s<br/>Excluded Elections %s",
+    G2_Race_Lab, G2_Age_Lab, params$Group$G2_Gender, 
+    params$Group$G2_Income_Range, params$Group$G2_Elections, params$Group$G2_No_Elections
+  ) %>% lapply(htmltools::HTML)
+
+
+```
+
+
+
+```{r, echo=FALSE, results='asis', eval=params$Filt$Group_Eval}
+
+cat(':::: {style="display: grid; grid-template-columns: 1fr 1fr; grid-column-gap: 10px;"}')
+```
+::: {}
+
+```{r, echo=FALSE, eval=params$Filt$Group_Eval}
+htmltools::knit_print.html(G1_labels)
+```
+
+:::
+
+
+::: {}
+```{r, echo=FALSE, eval=params$Filt$Group_Eval}
+htmltools::knit_print.html(G2_labels)
+```
+
+:::
+
+::::
+
+`r if(params$Filt$Group_Eval){"## Most Common Flags {.tabset}"}`
+
+```{r, echo=FALSE, eval=params$Filt$Group_Eval, out.width=c('50%', '50%')}
+params$Group$G1_MC
+params$Group$G2_MC
+```
+
+
+
+`r if(params$Filt$Group_Eval){"## Partisanship {.tabset}"}`
+```{r, echo=FALSE, eval=params$Filt$Group_Eval, out.width=c('50%', '50%')}
+params$Group$G1_Part
+params$Group$G2_Part
+```
+
+`r if(params$Filt$Group_Eval){"## Most & Least Agreed {.tabset}"}`
+```{r, echo=FALSE, eval=params$Filt$Group_Eval, out.width=c('50%', '50%')}
+params$Group$Chi_MS
+params$Group$Chi_LS
+```
+***
+
+`r if(params$Filt$Analy_Eval){"# Area Analysis {.tabset}"}`
+`r if(params$Filt$Analy_Eval){"## Sankey {.tabset}"}`
+
+```{r, echo=FALSE, eval=params$Filt$Analy_Eval, fig.dim=c(10,6)}
+Areass<-paste(params$Area$Areas, collapse = ", ") 
+
+  sprintf("<br/>Selected: %s<br/>", Areass) %>% 
+  htmltools::HTML() %>% 
+  htmltools::knit_print.html()
+
+params$Area$sankey
+```
+
+`r if(params$Filt$Analy_Eval){"## Race & Age {.tabset}"}`
+```{r, echo=FALSE, eval=params$Filt$Analy_Eval, fig.dim=c(10,4)}
+Areass<-paste(params$Area$Areas, collapse = ", ") 
+
+  sprintf("<br/>Selected: %s<br/>", Areass) %>% 
+  htmltools::HTML() %>% 
+  htmltools::knit_print.html()
+
+params$Area$barstack
+```
+
+`r if(params$Filt$Analy_Eval){"## Political Party {.tabset}"}`
+```{r, echo=FALSE, eval=params$Filt$Analy_Eval}
+Areass<-paste(params$Area$Areas, collapse = ", ") 
+
+  sprintf("<br/>Selected: %s<br/>", Areass) %>% 
+  htmltools::HTML() %>% 
+  htmltools::knit_print.html()
+
+params$Area$byparty
+```

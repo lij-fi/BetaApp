@@ -1,0 +1,21 @@
+Package: BetaApp
+Title: Haystack Dashboard
+Version: 0.0.0.9000
+Authors@R: 
+    person("Elijah", "Peterson", , "elijah@publicmedia.com", role = c("cre", "aut"))
+Description: A Golem framework shiny app to display and analyze
+    haystack/L2 data.
+License: MIT + file LICENSE
+Depends: R (>= 3.5.0)
+Imports: config (>= 0.3.2), dplyr, DT, ggplot2, ggsankey, golem (>=
+        0.4.1), grid, htmltools, leaflet, purrr, RColorBrewer, readr,
+        rmarkdown, shiny (>= 1.7.5.1), tibble, tidyr, VennDiagram
+Suggests: testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+NeedsCompilation: no
+Packaged: 2023-11-17 17:23:13 UTC; eli31
+Author: Elijah Peterson [cre, aut]
+Maintainer: Elijah Peterson <elijah@publicmedia.com>
